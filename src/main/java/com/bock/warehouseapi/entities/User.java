@@ -1,11 +1,16 @@
 package com.bock.warehouseapi.entities;
 
-import com.bock.warehouseapi.infra.UserRoles;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Table(name = "users")
-@Entity
-public class User {
+@Entity(name = "users")
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,10 +24,20 @@ public class User {
     private String email;
 
     @Column(name = "password")
-    private String Password;
+    private String password;
 
     @Column(name = "role")
-    private UserRoles role;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    public User() {
+    }
+
+    public User(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
 
     public Integer getId() {
         return id;
@@ -45,18 +60,53 @@ public class User {
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public void setPassword(String password) {
-        Password = password;
+        this.password = password;
     }
 
-    public UserRoles getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(UserRoles role) {
+    public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    @PrePersist
+    public void automaticRole() {
+        this.role = UserRole.USER;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.role == UserRole.ADMIN) {
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        } else {
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
