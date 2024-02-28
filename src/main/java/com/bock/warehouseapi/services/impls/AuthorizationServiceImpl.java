@@ -1,17 +1,19 @@
-package com.bock.warehouseapi.services;
+package com.bock.warehouseapi.services.impls;
 
 import com.bock.warehouseapi.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthorizationService implements UserDetailsService {
+public class AuthorizationServiceImpl implements UserDetailsService {
 
-    @Autowired
-    private UserRepository repository;
+    private final UserRepository repository;
+
+    public AuthorizationServiceImpl(UserRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -20,6 +22,5 @@ public class AuthorizationService implements UserDetailsService {
         } catch (Exception ex) {
             return null;
         }
-
     }
 }

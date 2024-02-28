@@ -5,9 +5,8 @@ import com.bock.warehouseapi.entities.dtos.LoginResponseDTO;
 import com.bock.warehouseapi.entities.dtos.UserLoginDTO;
 import com.bock.warehouseapi.entities.dtos.UserRegisterDTO;
 import com.bock.warehouseapi.repositories.UserRepository;
-import com.bock.warehouseapi.services.TokenService;
+import com.bock.warehouseapi.services.impls.TokenServiceImpl;
 import com.bock.warehouseapi.utils.RestResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,13 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/auth")
 public class AuthRestController {
 
-
     private final AuthenticationManager authenticationManager;
     private final UserRepository repository;
     private final RestResponse restResponse;
-    private final TokenService tokenService;
+    private final TokenServiceImpl tokenService;
 
-    public AuthRestController(AuthenticationManager authenticationManager, UserRepository repository, RestResponse restResponse, TokenService tokenService) {
+    public AuthRestController(AuthenticationManager authenticationManager, UserRepository repository, RestResponse restResponse, TokenServiceImpl tokenService) {
         this.authenticationManager = authenticationManager;
         this.repository = repository;
         this.restResponse = restResponse;
@@ -54,12 +52,11 @@ public class AuthRestController {
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody UserLoginDTO user) {
 
-        var usernamePassword = new UsernamePasswordAuthenticationToken(user.login(), user.password());
+        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(user.login(), user.password());
 
-        var auth = this.authenticationManager.authenticate(usernamePassword);
+        Authentication auth = this.authenticationManager.authenticate(usernamePassword);
         String token = tokenService.generateToken((User) auth.getPrincipal());
 
         return restResponse.ok("Usuário autenticado com sucesso.", new LoginResponseDTO(token));
-
     }
 }

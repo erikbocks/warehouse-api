@@ -1,6 +1,7 @@
 package com.bock.warehouseapi.utils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -12,9 +13,9 @@ import java.util.List;
 @Component
 public class RestResponse {
 
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     public static class MyResponse {
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "GMT-03", pattern = "dd-MM-yyyy HH:mm:ss")
         private Date timestamp;
         private Integer status;
         private List<String> messages;

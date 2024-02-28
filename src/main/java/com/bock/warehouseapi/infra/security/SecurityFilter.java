@@ -1,7 +1,7 @@
 package com.bock.warehouseapi.infra.security;
 
 import com.bock.warehouseapi.repositories.UserRepository;
-import com.bock.warehouseapi.services.TokenService;
+import com.bock.warehouseapi.services.impls.TokenServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,10 +17,10 @@ import java.io.IOException;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
-    private final TokenService tokenService;
+    private final TokenServiceImpl tokenService;
     private final UserRepository userRepository;
 
-    public SecurityFilter(TokenService tokenService, UserRepository userRepository) {
+    public SecurityFilter(TokenServiceImpl tokenService, UserRepository userRepository) {
         this.tokenService = tokenService;
         this.userRepository = userRepository;
     }
