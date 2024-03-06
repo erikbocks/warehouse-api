@@ -33,6 +33,12 @@ public class User implements UserDetails {
     public User() {
     }
 
+    public User(Integer id, String username, String email) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+    }
+
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
@@ -41,6 +47,10 @@ public class User implements UserDetails {
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getUsername() {

@@ -1,6 +1,6 @@
-package com.bock.warehouseapi.exceptions.custom;
+package com.bock.warehouseapi.exceptions;
 
-public class InvalidDataException  extends Exception{
+public class InvalidDataException extends Exception{
 
     public InvalidDataException(){}
 
