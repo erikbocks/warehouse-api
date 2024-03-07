@@ -1,10 +1,23 @@
 package com.bock.warehouseapi.entities.dtos;
 
 import com.bock.warehouseapi.entities.User;
+import jakarta.validation.constraints.*;
 
 public class UpdateUserDTO {
+
+    @NotNull(message = "O campo ID não pode ser nulo.")
+    @Positive(message = "O campo ID não pode ser menor ou igual a zero.")
     private Integer id;
+
+    @NotNull(message = "O campo USERNAME não pode ser nulo.")
+    @NotBlank(message = "O campo USERNAME não pode estar em branco.")
+    @NotEmpty(message = "O campo USERNAME não pode estar vazio.")
     private String username;
+
+    @NotNull(message = "O campo EMAIL não pode ser nulo.")
+    @NotBlank(message = "O campo EMAIL não pode estar em branco.")
+    @NotEmpty(message = "O campo EMAIL não pode estar vazio.")
+    @Email(message = "Insira um endereço de email válido")
     private String email;
 
     public Integer getId() {

@@ -1,5 +1,6 @@
 package com.bock.warehouseapi.entities.dtos;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ public class UserRegisterDTO {
     @NotNull(message = "O campo EMAIL não pode ser nulo.")
     @NotBlank(message = "O campo EMAIL não pode estar em branco.")
     @NotEmpty(message = "O campo EMAIL não pode estar vazio.")
+    @Email(message = "Insira um endereço de email válido")
     private String email;
 
     @NotNull(message = "O campo PASSWORD não pode ser nulo.")

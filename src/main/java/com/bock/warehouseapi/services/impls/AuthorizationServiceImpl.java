@@ -26,7 +26,7 @@ public class AuthorizationServiceImpl implements UserDetailsService {
         List<String> messages = new ArrayList<>();
 
         Pattern emailRegex = Pattern.compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
-        Pattern usernameRegex = Pattern.compile("(?!.*\\.\\.)(?!.*\\.$)[^\\W][\\w.]{0,29}");
+        Pattern usernameRegex = Pattern.compile("(?=[a-zA-Z0-9._]{6,20}$)(?!.*[_.]{2})[^_.].*[^_.]");
         Pattern passwordRegex = Pattern.compile("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,29}");
 
         if (!emailRegex.matcher(user.getEmail()).matches()) {

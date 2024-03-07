@@ -17,12 +17,15 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -31,11 +34,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     public RestExceptionHandler(RestResponse restResponse) {
         this.restResponse = restResponse;
-    }
-
-    @ExceptionHandler(InvalidDataException.class)
-    private ResponseEntity<Object> invalidDataHandler(InvalidDataException exception) {
-        return restResponse.badRequest(exception.getMessage());
     }
 
     @Override
@@ -74,13 +72,30 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        List<ErrorMessageDTO> messages = new ArrayList<>();
-        var teste = ex.getRequiredType();
+        if (ex instanceof MethodArgumentTypeMismatchException exception) {
+            List<ErrorMessageDTO> messages = new ArrayList<>();
+
+            String targetType = Objects.requireNonNull(exception.getRequiredType()).getSimpleName();
+            String propertyName = exception.getPropertyName();
+            String value = Objects.requireNonNull(exception.getValue()).toString();
+
+            messages.add(new ErrorMessageDTO(propertyName, String.format("O valor %s deve ser do tipo %s", value, targetType)));
+
+            return restResponse.badRequest("Ocorreu um erro com a tipagem dos dados", messages);
+        }
+
         return restResponse.badRequest("Ocorreu um erro com a tipagem dos dados.");
+    }
+
+    @ExceptionHandler(InvalidDataException.class)
+    private ResponseEntity<Object> invalidDataHandler(InvalidDataException exception) {
+        return restResponse.badRequest(exception.getMessage());
     }
 
     @ExceptionHandler(JWTVerificationException.class)
     private ResponseEntity<Object> handleJWTVerificationException(Exception ex) {
         return restResponse.unauthorized("Esse token é inválido.");
     }
+
+
 }

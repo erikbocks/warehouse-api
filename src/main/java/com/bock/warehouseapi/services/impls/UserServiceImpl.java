@@ -2,11 +2,14 @@ package com.bock.warehouseapi.services.impls;
 
 import com.bock.warehouseapi.entities.User;
 import com.bock.warehouseapi.entities.dtos.UpdateUserDTO;
+import com.bock.warehouseapi.entities.dtos.UserPasswordDTO;
 import com.bock.warehouseapi.exceptions.InvalidDataException;
 import com.bock.warehouseapi.repositories.UserRepository;
 import com.bock.warehouseapi.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,6 +28,7 @@ public class UserServiceImpl implements UserService {
 
     private List<String> validateRegexUpdate(String email, String username) {
         List<String> messages = new ArrayList<>();
+
         Pattern emailRegex = Pattern.compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
         Pattern usernameRegex = Pattern.compile("(?=[a-zA-Z0-9._]{6,20}$)(?!.*[_.]{2})[^_.].*[^_.]");
 
@@ -35,6 +39,19 @@ public class UserServiceImpl implements UserService {
 
         if (!usernameRegex.matcher(username).matches()) {
             messages.add("Seu usuário deve conter de 6 a 20 caracteres e apenas os símbolos(._).");
+            return messages;
+        }
+
+        return messages;
+    }
+
+    private List<String> validateRegexUpdatePassword(String newPassword) {
+        List<String> messages = new ArrayList<>();
+
+        Pattern passwordRegex = Pattern.compile("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,29}");
+
+        if (!passwordRegex.matcher(newPassword).matches()) {
+            messages.add("Sua senha deve conter pelo menos um número, uma letra maiúscula, um simbolo e ter de 6 a 30 caracteres");
             return messages;
         }
 
@@ -77,4 +94,43 @@ public class UserServiceImpl implements UserService {
 
         repository.saveAndFlush(toUpdateUser);
     }
+
+    @Override
+    public void updatePassword(UserPasswordDTO reqUser, User dbUser) throws InvalidDataException {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        if (!passwordEncoder.matches(reqUser.getOldPassword(), dbUser.getPassword())) {
+            throw new InvalidDataException("A senha atual não bate com a cadastrada.");
+        }
+
+        if (passwordEncoder.matches(reqUser.getOldPassword(), dbUser.getPassword())) {
+            throw new InvalidDataException("A senha atual não pode ser igual a cadastrada no banco.");
+        }
+
+        List<String> messages = validateRegexUpdatePassword(reqUser.getNewPassword());
+
+        if (!messages.isEmpty()) {
+            throw new InvalidDataException(messages.get(0));
+        }
+
+        String encryptedNewPassword = passwordEncoder.encode(reqUser.getNewPassword());
+        dbUser.setPassword(encryptedNewPassword);
+
+        repository.saveAndFlush(dbUser);
+    }
+
+    @Override
+    public void removeUser(Integer id) throws InvalidDataException {
+        try {
+            if (id == null || id == 0) {
+                throw new InvalidDataException("O campo ID não pode ser nulo e nem igual a zero.");
+            }
+
+            repository.deleteById(id);
+        } catch (InvalidDataException ex) {
+            throw new InvalidDataException(ex.getMessage());
+        }
+    }
+
+
 }
