@@ -57,7 +57,7 @@ public class AuthRestController {
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody UserLoginDTO user) {
 
-        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(user.login(), user.password());
+        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(user.getLogin(), user.getPassword());
 
         Authentication auth = this.authenticationManager.authenticate(usernamePassword);
 

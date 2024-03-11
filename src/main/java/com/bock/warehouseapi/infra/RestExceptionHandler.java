@@ -1,10 +1,8 @@
 package com.bock.warehouseapi.infra;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.bock.warehouseapi.entities.dtos.ErrorMessageDTO;
 import com.bock.warehouseapi.exceptions.InvalidDataException;
-import com.bock.warehouseapi.exceptions.InvalidTokenException;
 import com.bock.warehouseapi.utils.RestResponse;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.beans.TypeMismatchException;
@@ -12,17 +10,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

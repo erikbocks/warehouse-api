@@ -7,11 +7,9 @@ import com.bock.warehouseapi.exceptions.InvalidDataException;
 import com.bock.warehouseapi.services.UserService;
 import com.bock.warehouseapi.utils.RestResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -33,7 +31,7 @@ public class UserRestController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<Object> findUserById(@PathVariable Integer id) {
+    public ResponseEntity<Object> findUserById(@PathVariable Integer id) throws InvalidDataException {
         try {
             Optional<User> dbUser = userService.findById(id);
 
@@ -42,6 +40,8 @@ public class UserRestController {
             }
 
             return restResponse.ok("Usuário encontrado.", dbUser.get());
+        } catch (InvalidDataException ex) {
+            throw new InvalidDataException(ex.getMessage());
         } catch (Exception ex) {
             return restResponse.internalServerError("Ocorreu um erro ao processar sua requisição. Tente novamente mais tarde");
         }
