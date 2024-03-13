@@ -1,12 +1,11 @@
 package com.bock.warehouseapi.services.impls;
 
 import com.bock.warehouseapi.entities.User;
-import com.bock.warehouseapi.entities.dtos.UpdateUserDTO;
+import com.bock.warehouseapi.entities.dtos.UserUpdateDTO;
 import com.bock.warehouseapi.entities.dtos.UserPasswordDTO;
 import com.bock.warehouseapi.exceptions.InvalidDataException;
 import com.bock.warehouseapi.repositories.UserRepository;
 import com.bock.warehouseapi.services.UserService;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -59,11 +58,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> findAll(Pageable pageable) {
-        return repository.findAll(pageable);
-    }
-
-    @Override
     public Optional<User> findById(Integer id) throws InvalidDataException {
         if (id == null || id == 0) {
             throw new InvalidDataException("O campo ID não pode ser nulo e nem igual a zero.");
@@ -72,7 +66,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(User dbUser, UpdateUserDTO reqUser) throws InvalidDataException {
+    public Optional<User> findByUsername(String username) {
+        return repository.findByUsername(username);
+    }
+
+    @Override
+    public void updateUser(User dbUser, UserUpdateDTO reqUser) throws InvalidDataException {
 
         List<String> messages = validateRegexUpdate(reqUser.getEmail(), reqUser.getUsername());
 

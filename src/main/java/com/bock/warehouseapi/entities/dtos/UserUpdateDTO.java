@@ -3,7 +3,7 @@ package com.bock.warehouseapi.entities.dtos;
 import com.bock.warehouseapi.entities.User;
 import jakarta.validation.constraints.*;
 
-public class UpdateUserDTO {
+public class UserUpdateDTO {
 
     @NotNull(message = "O campo ID não pode ser nulo.")
     @Positive(message = "O campo ID não pode ser menor ou igual a zero.")

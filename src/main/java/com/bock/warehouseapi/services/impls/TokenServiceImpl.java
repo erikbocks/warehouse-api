@@ -26,7 +26,6 @@ public class TokenServiceImpl implements TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("WarehouseAPI")
-                    .withSubject(user.getEmail())
                     .withSubject(user.getUsername())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);

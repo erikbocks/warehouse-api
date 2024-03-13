@@ -85,6 +85,10 @@ public class User implements UserDetails {
         this.role = role;
     }
 
+    public boolean isAdmin() {
+        return this.role.getRole().equals("admin");
+    }
+
     @PrePersist
     public void automaticRole() {
         this.role = UserRole.USER;

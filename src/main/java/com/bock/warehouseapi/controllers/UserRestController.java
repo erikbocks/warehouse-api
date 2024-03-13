@@ -1,7 +1,7 @@
 package com.bock.warehouseapi.controllers;
 
 import com.bock.warehouseapi.entities.User;
-import com.bock.warehouseapi.entities.dtos.UpdateUserDTO;
+import com.bock.warehouseapi.entities.dtos.UserUpdateDTO;
 import com.bock.warehouseapi.entities.dtos.UserPasswordDTO;
 import com.bock.warehouseapi.exceptions.InvalidDataException;
 import com.bock.warehouseapi.services.UserService;
@@ -25,11 +25,6 @@ public class UserRestController {
         this.userService = userService;
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<Object> findAll(@PageableDefault(size = 10) Pageable pageable) {
-        return restResponse.ok("Usuários encontrados", userService.findAll(pageable));
-    }
-
     @GetMapping("/users/{id}")
     public ResponseEntity<Object> findUserById(@PathVariable Integer id) throws InvalidDataException {
         try {
@@ -48,7 +43,7 @@ public class UserRestController {
     }
 
     @PutMapping("/users/update")
-    public ResponseEntity<Object> updateUser(@RequestBody @Valid UpdateUserDTO user) throws InvalidDataException {
+    public ResponseEntity<Object> updateUser(@RequestBody @Valid UserUpdateDTO user) throws InvalidDataException {
         try {
             Optional<User> dbUser = userService.findById(user.getId());
 

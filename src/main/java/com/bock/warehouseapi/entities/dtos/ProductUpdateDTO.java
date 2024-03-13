@@ -2,12 +2,13 @@ package com.bock.warehouseapi.entities.dtos;
 
 import com.bock.warehouseapi.entities.Product;
 import com.bock.warehouseapi.entities.User;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 
-public class ProductRegisterDTO {
+public class ProductUpdateDTO {
+
+    @NotNull(message = "O campo ID não pode ser nulo.")
+    @Positive(message = "O campo ID deve ser maior que zero.")
+    private Integer id;
 
     @NotNull(message = "O campo PRODUCTNAME não pode ser nulo.")
     @NotBlank(message = "O campo PRODUCTNAME não pode estar em branco.")
@@ -23,9 +24,13 @@ public class ProductRegisterDTO {
     @NotEmpty(message = "O campo VALUE não pode estar vazio.")
     private String value;
 
-    @NotNull(message = "O campo OWNER não pode ser nulo.")
-    @PositiveOrZero(message = "O campo OWNER não pode ser menor que zero.")
-    private Integer owner;
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getProductName() {
         return productName;
@@ -51,22 +56,17 @@ public class ProductRegisterDTO {
         this.value = value;
     }
 
-    public Integer getOwner() {
-        return owner;
-    }
+    public Product toEntity(Product dbProduct) {
+        if (!this.productName.equals(dbProduct.getProductName())) {
+            dbProduct.setProductName(this.productName);
+        }
+        if (!this.amount.equals(dbProduct.getAmount())) {
+            dbProduct.setAmount(this.amount);
+        }
+        if (!this.value.equals(dbProduct.getValue())) {
+            dbProduct.setValue(this.value);
+        }
 
-    public void setOwner(Integer owner) {
-        this.owner = owner;
-    }
-
-    public Product toEntity(User owner) {
-        Product product = new Product();
-
-        product.setProductName(this.productName);
-        product.setAmount(this.amount);
-        product.setValue(this.value);
-        product.setOwner(owner);
-
-        return product;
+        return dbProduct;
     }
 }

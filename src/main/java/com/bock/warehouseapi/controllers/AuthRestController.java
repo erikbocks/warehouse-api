@@ -63,6 +63,6 @@ public class AuthRestController {
 
         String token = tokenService.generateToken((User) auth.getPrincipal());
 
-        return restResponse.ok("Usuário autenticado com sucesso.", new LoginResponseDTO(token));
+        return restResponse.ok("Usuário autenticado com sucesso.", new LoginResponseDTO(((User) auth.getPrincipal()).getId(), token));
     }
 }

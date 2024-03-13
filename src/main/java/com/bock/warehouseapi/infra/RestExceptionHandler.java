@@ -3,6 +3,7 @@ package com.bock.warehouseapi.infra;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.bock.warehouseapi.entities.dtos.ErrorMessageDTO;
 import com.bock.warehouseapi.exceptions.InvalidDataException;
+import com.bock.warehouseapi.exceptions.InvalidRoleException;
 import com.bock.warehouseapi.utils.RestResponse;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.beans.TypeMismatchException;
@@ -90,6 +91,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(JWTVerificationException.class)
     private ResponseEntity<Object> handleJWTVerificationException(Exception ex) {
         return restResponse.unauthorized("Esse token é inválido.");
+    }
+
+    @ExceptionHandler(InvalidRoleException.class)
+    private ResponseEntity<Object> handleInvalidRoleException(InvalidRoleException ex) {
+        return restResponse.unauthorized(ex.getMessage());
     }
 
 
