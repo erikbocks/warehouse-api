@@ -97,6 +97,4 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handleInvalidRoleException(InvalidRoleException ex) {
         return restResponse.unauthorized(ex.getMessage());
     }
-
-
 }
