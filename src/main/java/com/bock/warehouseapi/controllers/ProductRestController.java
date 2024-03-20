@@ -7,7 +7,6 @@ import com.bock.warehouseapi.entities.dtos.ProductUpdateDTO;
 import com.bock.warehouseapi.exceptions.InvalidDataException;
 import com.bock.warehouseapi.exceptions.InvalidRoleException;
 import com.bock.warehouseapi.services.ProductService;
-import com.bock.warehouseapi.services.TokenService;
 import com.bock.warehouseapi.services.UserService;
 import com.bock.warehouseapi.utils.RestResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,24 +31,22 @@ public class ProductRestController {
         this.restResponse = restResponse;
     }
 
-    @GetMapping(value = "/products/{id}")
-    public ResponseEntity<Object> findAllByOwner(HttpServletRequest request, @PathVariable Integer id, @PageableDefault(size = 10) Pageable pageable) throws InvalidDataException, InvalidRoleException {
+    @GetMapping(value = "/products/list")
+    public ResponseEntity<Object> findAllByOwner(HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable) throws InvalidDataException {
         try {
             String principalName = request.getUserPrincipal().getName();
             User tokenUser = userService.findByUsername(principalName).get();
 
-            Page<Product> products = productService.findAllByOwner(id, pageable, tokenUser);
+            Page<Product> products = productService.findAllByOwner(tokenUser.getId(), pageable);
 
             return restResponse.ok("Produtos encontrados com sucesso.", products);
         } catch (InvalidDataException ex) {
             throw new InvalidDataException(ex.getMessage());
-        } catch (InvalidRoleException ex) {
-            throw new InvalidRoleException(ex.getMessage());
         }
     }
 
     @PostMapping(value = "/products")
-    public ResponseEntity<Object> saveProduct(HttpServletRequest request, @RequestBody @Valid ProductRegisterDTO product) throws InvalidDataException {
+    public ResponseEntity<Object> saveProduct(HttpServletRequest request, @RequestBody @Valid ProductRegisterDTO product) {
         try {
             String principalName = request.getUserPrincipal().getName();
             User tokenUser = userService.findByUsername(principalName).get();
@@ -57,8 +54,6 @@ public class ProductRestController {
             productService.saveProduct(product, tokenUser);
 
             return restResponse.created("Produto criado com sucesso.");
-        } catch (InvalidDataException ex) {
-            throw new InvalidDataException(ex.getMessage());
         } catch (Exception ex) {
             return restResponse.badRequest(ex.getMessage());
         }
@@ -76,8 +71,6 @@ public class ProductRestController {
 
         } catch (InvalidDataException ex) {
             throw new InvalidDataException(ex.getMessage());
-        } catch (InvalidRoleException ex) {
-            throw new InvalidRoleException(ex.getMessage());
         }
     }
 
@@ -92,8 +85,6 @@ public class ProductRestController {
             return restResponse.ok("Produto removido com sucesso.");
         } catch (InvalidDataException ex) {
             throw new InvalidDataException(ex.getMessage());
-        } catch (InvalidRoleException ex) {
-            throw new InvalidRoleException(ex.getMessage());
         }
     }
 }

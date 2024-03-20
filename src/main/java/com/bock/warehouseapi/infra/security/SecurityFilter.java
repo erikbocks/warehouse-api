@@ -1,5 +1,8 @@
 package com.bock.warehouseapi.infra.security;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.Claim;
 import com.bock.warehouseapi.exceptions.InvalidTokenException;
 import com.bock.warehouseapi.repositories.UserRepository;
 import com.bock.warehouseapi.services.impls.TokenServiceImpl;
@@ -16,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {

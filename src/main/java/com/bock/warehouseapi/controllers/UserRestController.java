@@ -1,18 +1,15 @@
 package com.bock.warehouseapi.controllers;
 
 import com.bock.warehouseapi.entities.User;
-import com.bock.warehouseapi.entities.dtos.UserUpdateDTO;
 import com.bock.warehouseapi.entities.dtos.UserPasswordDTO;
+import com.bock.warehouseapi.entities.dtos.UserUpdateDTO;
 import com.bock.warehouseapi.exceptions.InvalidDataException;
 import com.bock.warehouseapi.services.UserService;
 import com.bock.warehouseapi.utils.RestResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/api")
@@ -25,33 +22,29 @@ public class UserRestController {
         this.userService = userService;
     }
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<Object> findUserById(@PathVariable Integer id) throws InvalidDataException {
+    @GetMapping("/users/find")
+    public ResponseEntity<Object> findUserById(HttpServletRequest request) throws InvalidDataException {
         try {
-            Optional<User> dbUser = userService.findById(id);
+            String principalName = request.getUserPrincipal().getName();
+            User tokenUser = userService.findByUsername(principalName).get();
 
-            if (dbUser.isEmpty()) {
-                return restResponse.ok("Nenhum registro encontrado.");
-            }
+            User dbUser = userService.findById(tokenUser.getId());
 
-            return restResponse.ok("Usuário encontrado.", dbUser.get());
+            return restResponse.ok("Usuário encontrado.", dbUser);
         } catch (InvalidDataException ex) {
             throw new InvalidDataException(ex.getMessage());
-        } catch (Exception ex) {
-            return restResponse.internalServerError("Ocorreu um erro ao processar sua requisição. Tente novamente mais tarde");
         }
     }
 
     @PutMapping("/users/update")
-    public ResponseEntity<Object> updateUser(@RequestBody @Valid UserUpdateDTO user) throws InvalidDataException {
+    public ResponseEntity<Object> updateUser(HttpServletRequest request, @RequestBody @Valid UserUpdateDTO user) throws InvalidDataException {
         try {
-            Optional<User> dbUser = userService.findById(user.getId());
+            String principalName = request.getUserPrincipal().getName();
+            User tokenUser = userService.findByUsername(principalName).get();
 
-            if (dbUser.isEmpty()) {
-                return restResponse.badRequest("Nenhum usuário encontrado com esse id.");
-            }
+            User dbUser = userService.findById(tokenUser.getId());
 
-            userService.updateUser(dbUser.get(), user);
+            userService.updateUser(dbUser, user);
 
             return restResponse.ok("Usuário atualizado com sucesso.");
         } catch (InvalidDataException exception) {
@@ -60,15 +53,14 @@ public class UserRestController {
     }
 
     @PutMapping("/users/update-password")
-    public ResponseEntity<Object> updateUserPassword(@RequestBody @Valid UserPasswordDTO user) throws InvalidDataException {
+    public ResponseEntity<Object> updateUserPassword(@RequestBody @Valid UserPasswordDTO user, HttpServletRequest request) throws InvalidDataException {
         try {
-            Optional<User> dbUser = userService.findById(user.getId());
+            String principalName = request.getUserPrincipal().getName();
+            User tokenUser = userService.findByUsername(principalName).get();
 
-            if (dbUser.isEmpty()) {
-                return restResponse.badRequest("Nenhum usuário encontrado com esse id.");
-            }
+            User dbUser = userService.findById(tokenUser.getId());
 
-            userService.updatePassword(user, dbUser.get());
+            userService.updatePassword(user, dbUser);
 
             return restResponse.ok("Senha atualizada com sucesso.");
         } catch (InvalidDataException ex) {
@@ -77,15 +69,12 @@ public class UserRestController {
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<Object> removeUser(@PathVariable Integer id) throws InvalidDataException {
+    public ResponseEntity<Object> removeUser(HttpServletRequest request, @PathVariable Integer id) throws InvalidDataException {
         try {
-            Optional<User> dbUser = userService.findById(id);
+            String principalName = request.getUserPrincipal().getName();
+            User tokenUser = userService.findByUsername(principalName).get();
 
-            if (dbUser.isEmpty()) {
-                return restResponse.badRequest("Nenhum usuário encontrado com esse id.");
-            }
-
-            userService.removeUser(id);
+            userService.removeUser(tokenUser.getId());
 
             return restResponse.ok("Usuário removido com sucesso.");
         } catch (InvalidDataException ex) {

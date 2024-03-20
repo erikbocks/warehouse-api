@@ -3,10 +3,7 @@ package com.bock.warehouseapi.services.impls;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.bock.warehouseapi.entities.User;
-import com.bock.warehouseapi.exceptions.InvalidTokenException;
 import com.bock.warehouseapi.services.TokenService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,6 +24,7 @@ public class TokenServiceImpl implements TokenService {
             return JWT.create()
                     .withIssuer("WarehouseAPI")
                     .withSubject(user.getUsername())
+                    .withClaim("user-id", user.getId())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException ex) {
@@ -36,6 +34,7 @@ public class TokenServiceImpl implements TokenService {
 
     public String validateToken(String token) {
             Algorithm algorithm = Algorithm.HMAC256(secret);
+
             return JWT.require(algorithm)
                     .withIssuer("WarehouseAPI")
                     .build()

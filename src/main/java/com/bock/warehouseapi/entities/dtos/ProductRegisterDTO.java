@@ -23,10 +23,6 @@ public class ProductRegisterDTO {
     @NotEmpty(message = "O campo VALUE não pode estar vazio.")
     private String value;
 
-    @NotNull(message = "O campo OWNER não pode ser nulo.")
-    @PositiveOrZero(message = "O campo OWNER não pode ser menor que zero.")
-    private Integer owner;
-
     public String getProductName() {
         return productName;
     }
@@ -49,14 +45,6 @@ public class ProductRegisterDTO {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public Integer getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Integer owner) {
-        this.owner = owner;
     }
 
     public Product toEntity(User owner) {

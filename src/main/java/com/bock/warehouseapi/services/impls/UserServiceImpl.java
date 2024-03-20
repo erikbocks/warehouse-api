@@ -1,13 +1,11 @@
 package com.bock.warehouseapi.services.impls;
 
 import com.bock.warehouseapi.entities.User;
-import com.bock.warehouseapi.entities.dtos.UserUpdateDTO;
 import com.bock.warehouseapi.entities.dtos.UserPasswordDTO;
+import com.bock.warehouseapi.entities.dtos.UserUpdateDTO;
 import com.bock.warehouseapi.exceptions.InvalidDataException;
 import com.bock.warehouseapi.repositories.UserRepository;
 import com.bock.warehouseapi.services.UserService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -58,11 +56,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findById(Integer id) throws InvalidDataException {
-        if (id == null || id == 0) {
+    public User findById(Integer userId) throws InvalidDataException {
+        if (userId == null || userId <= 0) {
             throw new InvalidDataException("O campo ID não pode ser nulo e nem igual a zero.");
         }
-        return repository.findById(id);
+
+        Optional<User> dbUser = repository.findById(userId);
+
+        if (dbUser.isEmpty()) {
+            throw new InvalidDataException("Nenhum usuário encontrado com esse id.");
+        }
+
+        return dbUser.get();
     }
 
     @Override
@@ -84,10 +89,10 @@ public class UserServiceImpl implements UserService {
         Optional<User> dbEmail = repository.findByEmail(reqUser.getEmail());
         Optional<User> dbUsername = repository.findByUsername(reqUser.getUsername());
 
-        if (dbEmail.isPresent() && !dbEmail.get().getId().equals(reqUser.getId())) {
+        if (dbEmail.isPresent() && !dbEmail.get().getId().equals(dbUser.getId())) {
             throw new InvalidDataException("Esse email já está cadastrado.");
         }
-        if (dbUsername.isPresent() && !dbUsername.get().getId().equals(reqUser.getId())) {
+        if (dbUsername.isPresent() && !dbUsername.get().getId().equals(dbUser.getId())) {
             throw new InvalidDataException("Esse nome de usuário já está cadastrado.");
         }
 
