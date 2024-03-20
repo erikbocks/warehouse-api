@@ -107,8 +107,8 @@ public class UserServiceImpl implements UserService {
             throw new InvalidDataException("A senha atual não bate com a cadastrada.");
         }
 
-        if (passwordEncoder.matches(reqUser.getOldPassword(), dbUser.getPassword())) {
-            throw new InvalidDataException("A senha atual não pode ser igual a cadastrada no banco.");
+        if (passwordEncoder.matches(reqUser.getNewPassword(), dbUser.getPassword())) {
+            throw new InvalidDataException("A senha nova não pode ser igual a já cadastrada no banco.");
         }
 
         List<String> messages = validateRegexUpdatePassword(reqUser.getNewPassword());

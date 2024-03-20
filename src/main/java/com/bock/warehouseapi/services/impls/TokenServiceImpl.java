@@ -32,14 +32,13 @@ public class TokenServiceImpl implements TokenService {
         }
     }
 
-    public String validateToken(String token) {
+    public Integer validateToken(String token) {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-
             return JWT.require(algorithm)
                     .withIssuer("WarehouseAPI")
                     .build()
                     .verify(token)
-                    .getSubject();
+                    .getClaim("user-id").asInt();
     }
 
     private Instant generateExpirationDate() {

@@ -17,4 +17,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query("SELECT u FROM users u WHERE lower(u.username) = lower(:login) OR lower(u.email) = lower(:login)")
     UserDetails findBySubject(@Param("login") String login);
+
+    @Query("SELECT u FROM users u WHERE u.id = :id")
+    UserDetails findBySubjectId(@Param("id") Integer id);
 }

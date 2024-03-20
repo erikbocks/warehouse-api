@@ -68,8 +68,8 @@ public class UserRestController {
         }
     }
 
-    @DeleteMapping("/users/{id}")
-    public ResponseEntity<Object> removeUser(HttpServletRequest request, @PathVariable Integer id) throws InvalidDataException {
+    @DeleteMapping("/users")
+    public ResponseEntity<Object> removeUser(HttpServletRequest request) throws InvalidDataException {
         try {
             String principalName = request.getUserPrincipal().getName();
             User tokenUser = userService.findByUsername(principalName).get();

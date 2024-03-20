@@ -1,12 +1,8 @@
 package com.bock.warehouseapi.infra.security;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.Claim;
-import com.bock.warehouseapi.exceptions.InvalidTokenException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.bock.warehouseapi.repositories.UserRepository;
 import com.bock.warehouseapi.services.impls.TokenServiceImpl;
-import com.bock.warehouseapi.utils.RestResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +15,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
-import java.util.Map;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
@@ -42,15 +37,20 @@ public class SecurityFilter extends OncePerRequestFilter {
         return authHeader.replace("Bearer ", "");
     }
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String token = this.recoverToken(request);
 
             if (token != null) {
-                String subject = tokenService.validateToken(token);
+                Integer subjectId = tokenService.validateToken(token);
 
-                UserDetails user = userRepository.findBySubject(subject);
+                UserDetails user = userRepository.findBySubjectId(subjectId);
+
+                if (user == null) {
+                    throw new JWTVerificationException("Esse token é inválido.");
+                }
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
@@ -62,6 +62,4 @@ public class SecurityFilter extends OncePerRequestFilter {
             handlerExceptionResolver.resolveException(request, response, null, ex);
         }
     }
-
-
 }
