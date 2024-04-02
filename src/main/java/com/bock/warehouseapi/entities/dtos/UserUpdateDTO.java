@@ -16,6 +16,11 @@ public class UserUpdateDTO {
     @Email(message = "Insira um endereço de email válido")
     private String email;
 
+    public UserUpdateDTO(String username, String email) {
+        this.username = username;
+        this.email = email;
+    }
+
     public String getUsername() {
         return username;
     }

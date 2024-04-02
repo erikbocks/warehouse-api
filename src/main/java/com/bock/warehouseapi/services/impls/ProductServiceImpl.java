@@ -6,20 +6,17 @@ import com.bock.warehouseapi.entities.dtos.ProductRegisterDTO;
 import com.bock.warehouseapi.entities.dtos.ProductUpdateDTO;
 import com.bock.warehouseapi.exceptions.InvalidDataException;
 import com.bock.warehouseapi.repositories.ProductRepository;
-import com.bock.warehouseapi.repositories.UserRepository;
 import com.bock.warehouseapi.services.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository, UserRepository userRepository) {
+    public ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
@@ -46,15 +43,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void updateProduct(ProductUpdateDTO reqProduct, User tokenUser) throws InvalidDataException {
 
-        Optional<Product> dbProduct = productRepository.findByIdAndOwner(reqProduct.getId(), tokenUser.getId());
+        Product dbProduct = productRepository.findByIdAndOwner(reqProduct.getId(), tokenUser.getId()).orElseThrow(() -> new InvalidDataException("Nenhum produto encontrado com esse id"));
 
-        if (dbProduct.isEmpty()) {
-            throw new InvalidDataException("Nenhum produto encontrado com esse id");
-        }
-
-        Product product = dbProduct.get();
-
-        Product toUpdateProduct = reqProduct.toEntity(product);
+        Product toUpdateProduct = reqProduct.toEntity(dbProduct);
 
         productRepository.saveAndFlush(toUpdateProduct);
     }
@@ -65,14 +56,8 @@ public class ProductServiceImpl implements ProductService {
             throw new InvalidDataException("O parâmetro ID não pode ser igual ou menor do que zero.");
         }
 
-        Optional<Product> dbProduct = productRepository.findByIdAndOwner(productId, tokenUser.getId());
+        Product dbProduct = productRepository.findByIdAndOwner(productId, tokenUser.getId()).orElseThrow(() -> new InvalidDataException("Nenhum produto encontrado com esse id."));
 
-        if (dbProduct.isEmpty()) {
-            throw new InvalidDataException("Nenhum produto encontrado com esse id.");
-        }
-
-        Product product = dbProduct.get();
-
-        productRepository.delete(product);
+        productRepository.delete(dbProduct);
     }
 }

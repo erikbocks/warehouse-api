@@ -23,6 +23,12 @@ public class ProductRegisterDTO {
     @NotEmpty(message = "O campo VALUE não pode estar vazio.")
     private String value;
 
+    public ProductRegisterDTO(String productName, Integer amount, String value) {
+        this.productName = productName;
+        this.amount = amount;
+        this.value = value;
+    }
+
     public String getProductName() {
         return productName;
     }

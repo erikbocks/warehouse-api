@@ -25,7 +25,6 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/auth")
 public class AuthRestController {
-
     private final RestResponse restResponse;
     private final AuthorizationServiceImpl authService;
     private final AuthenticationManager authenticationManager;

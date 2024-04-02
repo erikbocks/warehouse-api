@@ -16,6 +16,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "AND o.id = ?2")
     Optional<Product> findByIdAndOwner(Integer id, Integer ownerId);
 
-    @Query("SELECT p FROM products p INNER JOIN users u ON p.owner.id = :ownerId")
+    @Query("SELECT p FROM products p " +
+            "INNER JOIN users u " +
+            "ON p.owner.id = :ownerId")
     Page<Product> findAllByOwnerId(@Param("ownerId") Integer id, Pageable pageable);
 }

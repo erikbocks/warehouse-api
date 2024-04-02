@@ -6,6 +6,7 @@ import com.bock.warehouseapi.entities.dtos.UserUpdateDTO;
 import com.bock.warehouseapi.exceptions.InvalidDataException;
 import com.bock.warehouseapi.repositories.UserRepository;
 import com.bock.warehouseapi.services.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,14 +46,32 @@ public class UserServiceImpl implements UserService {
     private List<String> validateRegexUpdatePassword(String newPassword) {
         List<String> messages = new ArrayList<>();
 
-        Pattern passwordRegex = Pattern.compile("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,29}");
+        Pattern passwordRegex = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()])(?!.*\\s).{6,30}$");
 
         if (!passwordRegex.matcher(newPassword).matches()) {
             messages.add("Sua senha deve conter pelo menos um número, uma letra maiúscula, um simbolo e ter de 6 a 30 caracteres");
-            return messages;
         }
 
         return messages;
+    }
+
+    private boolean isEmailUnique(String email) {
+        Optional<User> dbUser = repository.findByEmail(email);
+        return dbUser.isEmpty();
+    }
+
+    private boolean isUsernameUnique(String username) {
+        Optional<User> dbUser = repository.findByUsername(username);
+        return dbUser.isEmpty();
+    }
+
+    private void validateUserData(UserUpdateDTO reqUser) throws InvalidDataException {
+
+        List<String> messages = new ArrayList<>(validateRegexUpdate(reqUser.getEmail(), reqUser.getUsername()));
+
+        if (!messages.isEmpty()) {
+            throw new InvalidDataException(messages.get(0));
+        }
     }
 
     @Override
@@ -61,50 +80,43 @@ public class UserServiceImpl implements UserService {
             throw new InvalidDataException("O campo ID não pode ser nulo e nem igual a zero.");
         }
 
-        Optional<User> dbUser = repository.findById(userId);
+        return repository.findById(userId).orElseThrow(() -> new InvalidDataException("Nenhum usuário encontrado com esse id."));
+    }
 
-        if (dbUser.isEmpty()) {
-            throw new InvalidDataException("Nenhum usuário encontrado com esse id.");
+    @Override
+    public User findByUsername(String username) throws InvalidDataException {
+        if (username == null || username.isBlank()) {
+            throw new InvalidDataException("O nome de usuário não pode ser nulo ou vazio.");
         }
 
-        return dbUser.get();
+        return repository.findByUsername(username).orElseThrow(() -> new InvalidDataException("Nenhum usuário encontrado com esse nome de usuário."));
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
-        return repository.findByUsername(username);
-    }
-
-    @Override
+    @Transactional
     public void updateUser(User dbUser, UserUpdateDTO reqUser) throws InvalidDataException {
+        validateUserData(reqUser);
 
-        List<String> messages = validateRegexUpdate(reqUser.getEmail(), reqUser.getUsername());
+        if (!isEmailUnique(reqUser.getEmail())) {
+            throw new InvalidDataException("Esse email já está cadastrado.");
+        }
 
-        if (!messages.isEmpty()) {
-            throw new InvalidDataException(messages.get(0));
+        if (!isUsernameUnique(reqUser.getUsername())) {
+            throw new InvalidDataException("Esse nome de usuário já está cadastrado.");
         }
 
         User toUpdateUser = reqUser.toEntity(dbUser);
-
-        Optional<User> dbEmail = repository.findByEmail(reqUser.getEmail());
-        Optional<User> dbUsername = repository.findByUsername(reqUser.getUsername());
-
-        if (dbEmail.isPresent() && !dbEmail.get().getId().equals(dbUser.getId())) {
-            throw new InvalidDataException("Esse email já está cadastrado.");
-        }
-        if (dbUsername.isPresent() && !dbUsername.get().getId().equals(dbUser.getId())) {
-            throw new InvalidDataException("Esse nome de usuário já está cadastrado.");
-        }
 
         repository.saveAndFlush(toUpdateUser);
     }
 
     @Override
+    @Transactional
     public void updatePassword(UserPasswordDTO reqUser, User dbUser) throws InvalidDataException {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
         if (!passwordEncoder.matches(reqUser.getOldPassword(), dbUser.getPassword())) {
-            throw new InvalidDataException("A senha atual não bate com a cadastrada.");
+            throw new InvalidDataException("A senha atual não coincide com a cadastrada.");
         }
 
         if (passwordEncoder.matches(reqUser.getNewPassword(), dbUser.getPassword())) {
@@ -124,16 +136,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void removeUser(Integer id) throws InvalidDataException {
-        try {
-            if (id == null || id == 0) {
-                throw new InvalidDataException("O campo ID não pode ser nulo e nem igual a zero.");
-            }
-
-            repository.deleteById(id);
-        } catch (InvalidDataException ex) {
-            throw new InvalidDataException(ex.getMessage());
+        if (id == null || id == 0) {
+            throw new InvalidDataException("O campo ID não pode ser nulo e nem igual a zero.");
         }
+
+        repository.deleteById(id);
     }
 
 

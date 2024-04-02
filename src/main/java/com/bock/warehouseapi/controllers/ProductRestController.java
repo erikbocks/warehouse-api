@@ -35,7 +35,7 @@ public class ProductRestController {
     public ResponseEntity<Object> findAllByOwner(HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable) throws InvalidDataException {
         try {
             String principalName = request.getUserPrincipal().getName();
-            User tokenUser = userService.findByUsername(principalName).get();
+            User tokenUser = userService.findByUsername(principalName);
 
             Page<Product> products = productService.findAllByOwner(tokenUser.getId(), pageable);
 
@@ -49,7 +49,7 @@ public class ProductRestController {
     public ResponseEntity<Object> saveProduct(HttpServletRequest request, @RequestBody @Valid ProductRegisterDTO product) {
         try {
             String principalName = request.getUserPrincipal().getName();
-            User tokenUser = userService.findByUsername(principalName).get();
+            User tokenUser = userService.findByUsername(principalName);
 
             productService.saveProduct(product, tokenUser);
 
@@ -60,10 +60,10 @@ public class ProductRestController {
     }
 
     @PutMapping("/products")
-    public ResponseEntity<Object> updateProduct(@RequestBody @Valid ProductUpdateDTO reqProduct, HttpServletRequest request) throws InvalidDataException, InvalidRoleException {
+    public ResponseEntity<Object> updateProduct(@RequestBody @Valid ProductUpdateDTO reqProduct, HttpServletRequest request) throws InvalidDataException {
         try {
             String principalName = request.getUserPrincipal().getName();
-            User tokenUser = userService.findByUsername(principalName).get();
+            User tokenUser = userService.findByUsername(principalName);
 
             productService.updateProduct(reqProduct, tokenUser);
 
@@ -75,10 +75,10 @@ public class ProductRestController {
     }
 
     @DeleteMapping("/products/{productId}")
-    public ResponseEntity<Object> deleteProduct(HttpServletRequest request, @PathVariable Integer productId) throws InvalidRoleException, InvalidDataException {
+    public ResponseEntity<Object> deleteProduct(HttpServletRequest request, @PathVariable Integer productId) throws InvalidDataException {
         try {
             String principalName = request.getUserPrincipal().getName();
-            User tokenUser = userService.findByUsername(principalName).get();
+            User tokenUser = userService.findByUsername(principalName);
 
             productService.deleteProduct(productId, tokenUser);
 

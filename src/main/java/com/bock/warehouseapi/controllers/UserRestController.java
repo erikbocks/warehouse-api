@@ -26,13 +26,13 @@ public class UserRestController {
     public ResponseEntity<Object> findUserById(HttpServletRequest request) throws InvalidDataException {
         try {
             String principalName = request.getUserPrincipal().getName();
-            User tokenUser = userService.findByUsername(principalName).get();
+            User tokenUser = userService.findByUsername(principalName);
 
             User dbUser = userService.findById(tokenUser.getId());
 
             return restResponse.ok("Usuário encontrado.", dbUser);
-        } catch (InvalidDataException ex) {
-            throw new InvalidDataException(ex.getMessage());
+        } catch (Exception ex) {
+            throw ex;
         }
     }
 
@@ -40,15 +40,15 @@ public class UserRestController {
     public ResponseEntity<Object> updateUser(HttpServletRequest request, @RequestBody @Valid UserUpdateDTO user) throws InvalidDataException {
         try {
             String principalName = request.getUserPrincipal().getName();
-            User tokenUser = userService.findByUsername(principalName).get();
+            User tokenUser = userService.findByUsername(principalName);
 
             User dbUser = userService.findById(tokenUser.getId());
 
             userService.updateUser(dbUser, user);
 
             return restResponse.ok("Usuário atualizado com sucesso.");
-        } catch (InvalidDataException exception) {
-            throw new InvalidDataException(exception.getMessage());
+        } catch (Exception ex) {
+            throw ex;
         }
     }
 
@@ -56,15 +56,15 @@ public class UserRestController {
     public ResponseEntity<Object> updateUserPassword(@RequestBody @Valid UserPasswordDTO user, HttpServletRequest request) throws InvalidDataException {
         try {
             String principalName = request.getUserPrincipal().getName();
-            User tokenUser = userService.findByUsername(principalName).get();
+            User tokenUser = userService.findByUsername(principalName);
 
             User dbUser = userService.findById(tokenUser.getId());
 
             userService.updatePassword(user, dbUser);
 
             return restResponse.ok("Senha atualizada com sucesso.");
-        } catch (InvalidDataException ex) {
-            throw new InvalidDataException(ex.getMessage());
+        } catch (Exception ex) {
+            throw ex;
         }
     }
 
@@ -72,13 +72,15 @@ public class UserRestController {
     public ResponseEntity<Object> removeUser(HttpServletRequest request) throws InvalidDataException {
         try {
             String principalName = request.getUserPrincipal().getName();
-            User tokenUser = userService.findByUsername(principalName).get();
+            User tokenUser = userService.findByUsername(principalName);
 
             userService.removeUser(tokenUser.getId());
 
             return restResponse.ok("Usuário removido com sucesso.");
-        } catch (InvalidDataException ex) {
-            throw new InvalidDataException(ex.getMessage());
+        } catch (Exception ex) {
+            throw ex;
         }
+
+
     }
 }

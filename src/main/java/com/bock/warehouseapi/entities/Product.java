@@ -29,6 +29,16 @@ public class Product {
     public Product() {
     }
 
+    public Product(Integer id, String productName, Integer amount, String value, Date createdOn, Date lastEdit, User owner) {
+        this.id = id;
+        this.productName = productName;
+        this.amount = amount;
+        this.value = value;
+        this.createdOn = createdOn;
+        this.lastEdit = lastEdit;
+        this.owner = owner;
+    }
+
     public Integer getId() {
         return id;
     }

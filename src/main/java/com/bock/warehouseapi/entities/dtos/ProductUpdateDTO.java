@@ -24,6 +24,13 @@ public class ProductUpdateDTO {
     @NotEmpty(message = "O campo VALUE não pode estar vazio.")
     private String value;
 
+    public ProductUpdateDTO(Integer id, String productName, Integer amount, String value) {
+        this.id = id;
+        this.productName = productName;
+        this.amount = amount;
+        this.value = value;
+    }
+
     public Integer getId() {
         return id;
     }

@@ -16,6 +16,11 @@ public class UserPasswordDTO {
     @NotEmpty(message = "O campo NEWPASSWORD não pode estar vazio.")
     private String newPassword;
 
+    public UserPasswordDTO(String oldPassword, String newPassword) {
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
+    }
+
     public String getOldPassword() {
         return oldPassword;
     }
