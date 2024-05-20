@@ -39,10 +39,10 @@ public class UserUpdateDTO {
 
     public User toEntity(User user) {
         if (this.email != null && !this.email.isBlank() && !this.email.isEmpty()) {
-            user.setEmail(this.email);
+            user.setEmail(this.email.trim());
         }
         if (this.username != null && !this.username.isBlank() && !this.username.isEmpty()) {
-            user.setUsername(this.username);
+            user.setUsername(this.username.trim());
         }
 
         return user;

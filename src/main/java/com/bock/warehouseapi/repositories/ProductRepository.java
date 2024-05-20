@@ -12,12 +12,13 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("select p from products p " +
             "INNER JOIN p.owner o " +
-            "WHERE p.id = ?1 " +
-            "AND o.id = ?2")
-    Optional<Product> findByIdAndOwner(Integer id, Integer ownerId);
+            "WHERE p.id = :productId " +
+            "AND o.id = :ownerId")
+    Optional<Product> findByIdAndOwner(@Param("productId") Integer id, @Param("ownerId") Integer ownerId);
 
     @Query("SELECT p FROM products p " +
-            "INNER JOIN users u " +
-            "ON p.owner.id = :ownerId")
+            "INNER JOIN p.owner o " +
+            "WHERE o.id = :ownerId " +
+            "ORDER BY p.id ASC")
     Page<Product> findAllByOwnerId(@Param("ownerId") Integer id, Pageable pageable);
 }

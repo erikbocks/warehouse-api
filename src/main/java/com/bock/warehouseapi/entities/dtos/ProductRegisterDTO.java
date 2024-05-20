@@ -56,7 +56,7 @@ public class ProductRegisterDTO {
     public Product toEntity(User owner) {
         Product product = new Product();
 
-        product.setProductName(this.productName);
+        product.setProductName(this.productName.trim());
         product.setAmount(this.amount);
         product.setValue(this.value);
         product.setOwner(owner);

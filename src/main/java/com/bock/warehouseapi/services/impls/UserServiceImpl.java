@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
     private void validateUserData(UserUpdateDTO reqUser) throws InvalidDataException {
 
-        List<String> messages = new ArrayList<>(validateRegexUpdate(reqUser.getEmail(), reqUser.getUsername()));
+        List<String> messages = new ArrayList<>(validateRegexUpdate(reqUser.getEmail().trim(), reqUser.getUsername().trim()));
 
         if (!messages.isEmpty()) {
             throw new InvalidDataException(messages.get(0));
@@ -97,11 +97,11 @@ public class UserServiceImpl implements UserService {
     public void updateUser(User dbUser, UserUpdateDTO reqUser) throws InvalidDataException {
         validateUserData(reqUser);
 
-        if (!isEmailUnique(reqUser.getEmail())) {
+        if (!isEmailUnique(reqUser.getEmail().trim()) && !reqUser.getEmail().trim().equals(dbUser.getEmail())) {
             throw new InvalidDataException("Esse email já está cadastrado.");
         }
 
-        if (!isUsernameUnique(reqUser.getUsername())) {
+        if (!isUsernameUnique(reqUser.getUsername().trim()) && !reqUser.getUsername().trim().equals(dbUser.getUsername())) {
             throw new InvalidDataException("Esse nome de usuário já está cadastrado.");
         }
 
@@ -115,21 +115,21 @@ public class UserServiceImpl implements UserService {
     public void updatePassword(UserPasswordDTO reqUser, User dbUser) throws InvalidDataException {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-        if (!passwordEncoder.matches(reqUser.getOldPassword(), dbUser.getPassword())) {
+        if (!passwordEncoder.matches(reqUser.getOldPassword().trim(), dbUser.getPassword())) {
             throw new InvalidDataException("A senha atual não coincide com a cadastrada.");
         }
 
-        if (passwordEncoder.matches(reqUser.getNewPassword(), dbUser.getPassword())) {
+        if (passwordEncoder.matches(reqUser.getNewPassword().trim(), dbUser.getPassword())) {
             throw new InvalidDataException("A senha nova não pode ser igual a já cadastrada no banco.");
         }
 
-        List<String> messages = validateRegexUpdatePassword(reqUser.getNewPassword());
+        List<String> messages = validateRegexUpdatePassword(reqUser.getNewPassword().trim());
 
         if (!messages.isEmpty()) {
             throw new InvalidDataException(messages.get(0));
         }
 
-        String encryptedNewPassword = passwordEncoder.encode(reqUser.getNewPassword());
+        String encryptedNewPassword = passwordEncoder.encode(reqUser.getNewPassword().trim());
         dbUser.setPassword(encryptedNewPassword);
 
         repository.saveAndFlush(dbUser);

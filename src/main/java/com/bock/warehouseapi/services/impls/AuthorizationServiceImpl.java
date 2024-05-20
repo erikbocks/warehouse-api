@@ -29,15 +29,15 @@ public class AuthorizationServiceImpl implements UserDetailsService {
         Pattern usernameRegex = Pattern.compile("(?=[a-zA-Z0-9._]{6,20}$)(?!.*[_.]{2})[^_.].*[^_.]");
         Pattern passwordRegex = Pattern.compile("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,29}");
 
-        if (!emailRegex.matcher(user.getEmail()).matches()) {
+        if (!emailRegex.matcher(user.getEmail().trim()).matches()) {
             messages.add("Insira um endereço de email valido.");
             return messages;
         }
-        if (!usernameRegex.matcher(user.getUsername()).matches()) {
+        if (!usernameRegex.matcher(user.getUsername().trim()).matches()) {
             messages.add("Seu usuário deve conter de 6 a 30 caracteres e apenas os símbolos(._).");
             return messages;
         }
-        if (!passwordRegex.matcher(user.getPassword()).matches()) {
+        if (!passwordRegex.matcher(user.getPassword().trim()).matches()) {
             messages.add("Sua senha deve conter pelo menos um número, uma letra maiúscula, um simbolo e ter de 6 a 30 caracteres");
             return messages;
         }
@@ -48,7 +48,7 @@ public class AuthorizationServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
-            return repository.findBySubject(username);
+            return repository.findBySubject(username.trim());
         } catch (Exception ex) {
             return null;
         }
@@ -62,8 +62,8 @@ public class AuthorizationServiceImpl implements UserDetailsService {
         }
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(userData.getPassword());
-        User toSaveUser = new User(userData.getUsername(), userData.getEmail(), encryptedPassword);
+        User toSaveUser = new User(userData.getUsername().trim(), userData.getEmail().trim(), encryptedPassword);
 
-        this.repository.saveAndFlush(toSaveUser);
+        repository.saveAndFlush(toSaveUser);
     }
 }

@@ -47,6 +47,10 @@ public class ProductServiceImpl implements ProductService {
 
         Product toUpdateProduct = reqProduct.toEntity(dbProduct);
 
+        if (toUpdateProduct.getValue() == null || toUpdateProduct.getValue().isBlank()) {
+            toUpdateProduct.setValue("0,00");
+        }
+
         productRepository.saveAndFlush(toUpdateProduct);
     }
 

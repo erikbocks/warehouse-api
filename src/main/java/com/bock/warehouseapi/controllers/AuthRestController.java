@@ -13,13 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -56,8 +54,7 @@ public class AuthRestController {
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody UserLoginDTO user) {
 
-        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(user.getLogin(), user.getPassword());
-
+        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(user.getLogin().trim(), user.getPassword().trim());
         Authentication auth = this.authenticationManager.authenticate(usernamePassword);
 
         String token = tokenService.generateToken((User) auth.getPrincipal());

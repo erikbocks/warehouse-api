@@ -64,8 +64,8 @@ public class ProductUpdateDTO {
     }
 
     public Product toEntity(Product dbProduct) {
-        if (!this.productName.equals(dbProduct.getProductName())) {
-            dbProduct.setProductName(this.productName);
+        if (!this.productName.trim().equals(dbProduct.getProductName())) {
+            dbProduct.setProductName(this.productName.trim());
         }
         if (!this.amount.equals(dbProduct.getAmount())) {
             dbProduct.setAmount(this.amount);

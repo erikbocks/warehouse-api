@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/api", produces = "application/json")
 public class UserRestController {
     private final RestResponse restResponse;
     private final UserService userService;
@@ -28,9 +28,9 @@ public class UserRestController {
             String principalName = request.getUserPrincipal().getName();
             User tokenUser = userService.findByUsername(principalName);
 
-            User dbUser = userService.findById(tokenUser.getId());
+            User owner = new User(tokenUser.getId(), tokenUser.getUsername(), tokenUser.getEmail(), tokenUser.getRole());
 
-            return restResponse.ok("Usuário encontrado.", dbUser);
+            return restResponse.ok("Usuário encontrado.", owner);
         } catch (Exception ex) {
             throw ex;
         }

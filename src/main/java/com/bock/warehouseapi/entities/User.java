@@ -1,5 +1,6 @@
 package com.bock.warehouseapi.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,6 +24,7 @@ public class User implements UserDetails {
     @Column(name = "email")
     private String email;
 
+    @JsonIgnore
     @Column(name = "password")
     private String password;
 
@@ -43,6 +45,13 @@ public class User implements UserDetails {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public User(Integer id, String username, String email, UserRole role) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.role = role;
     }
 
     public User(Integer id, String username, String email, String password, UserRole role) {
@@ -91,10 +100,6 @@ public class User implements UserDetails {
 
     public void setRole(UserRole role) {
         this.role = role;
-    }
-
-    public boolean isAdmin() {
-        return this.role.getRole().equals("admin");
     }
 
     @PrePersist

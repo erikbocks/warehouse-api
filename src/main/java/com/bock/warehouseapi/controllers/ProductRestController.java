@@ -5,7 +5,6 @@ import com.bock.warehouseapi.entities.User;
 import com.bock.warehouseapi.entities.dtos.ProductRegisterDTO;
 import com.bock.warehouseapi.entities.dtos.ProductUpdateDTO;
 import com.bock.warehouseapi.exceptions.InvalidDataException;
-import com.bock.warehouseapi.exceptions.InvalidRoleException;
 import com.bock.warehouseapi.services.ProductService;
 import com.bock.warehouseapi.services.UserService;
 import com.bock.warehouseapi.utils.RestResponse;
@@ -31,8 +30,8 @@ public class ProductRestController {
         this.restResponse = restResponse;
     }
 
-    @GetMapping(value = "/products/list")
-    public ResponseEntity<Object> findAllByOwner(HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable) throws InvalidDataException {
+    @GetMapping(value = "/products")
+    public ResponseEntity<Object> findAllByOwner(HttpServletRequest request, @PageableDefault(size = 5) Pageable pageable) throws InvalidDataException {
         try {
             String principalName = request.getUserPrincipal().getName();
             User tokenUser = userService.findByUsername(principalName);
