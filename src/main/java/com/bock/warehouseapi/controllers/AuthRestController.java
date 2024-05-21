@@ -36,19 +36,18 @@ public class AuthRestController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody @Valid UserRegisterDTO newUser) {
-        try {
-            List<String> messages = authService.validateRegex(newUser);
-            if (!messages.isEmpty()) {
-                return restResponse.badRequest(messages);
-            }
+    public ResponseEntity<Object> register(@RequestBody @Valid UserRegisterDTO newUser) throws InvalidDataException {
 
-            authService.registerUser(newUser);
+        String message = authService.validateRegex(newUser);
 
-            return restResponse.created("Usuário criado com sucesso.");
-        } catch (InvalidDataException exception) {
-            return restResponse.badRequest(exception.getMessage());
+        if (!message.isEmpty()) {
+            throw new InvalidDataException(message);
         }
+
+        authService.registerUser(newUser);
+
+        return restResponse.created("Usuário criado com sucesso.");
+
     }
 
     @PostMapping("/login")

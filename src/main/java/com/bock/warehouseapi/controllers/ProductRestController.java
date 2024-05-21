@@ -32,58 +32,42 @@ public class ProductRestController {
 
     @GetMapping(value = "/products")
     public ResponseEntity<Object> findAllByOwner(HttpServletRequest request, @PageableDefault(size = 5) Pageable pageable) throws InvalidDataException {
-        try {
-            String principalName = request.getUserPrincipal().getName();
-            User tokenUser = userService.findByUsername(principalName);
+        String principalName = request.getUserPrincipal().getName();
+        User tokenUser = userService.findByUsername(principalName);
 
-            Page<Product> products = productService.findAllByOwner(tokenUser.getId(), pageable);
+        Page<Product> products = productService.findAllByOwner(tokenUser.getId(), pageable);
 
-            return restResponse.ok("Produtos encontrados com sucesso.", products);
-        } catch (InvalidDataException ex) {
-            throw new InvalidDataException(ex.getMessage());
-        }
+        return restResponse.ok("Produtos encontrados com sucesso.", products);
     }
 
     @PostMapping(value = "/products")
-    public ResponseEntity<Object> saveProduct(HttpServletRequest request, @RequestBody @Valid ProductRegisterDTO product) {
-        try {
-            String principalName = request.getUserPrincipal().getName();
-            User tokenUser = userService.findByUsername(principalName);
+    public ResponseEntity<Object> saveProduct(HttpServletRequest request, @RequestBody @Valid ProductRegisterDTO product) throws InvalidDataException {
+        String principalName = request.getUserPrincipal().getName();
+        User tokenUser = userService.findByUsername(principalName);
 
-            productService.saveProduct(product, tokenUser);
+        productService.saveProduct(product, tokenUser);
 
-            return restResponse.created("Produto criado com sucesso.");
-        } catch (Exception ex) {
-            return restResponse.badRequest(ex.getMessage());
-        }
+        return restResponse.created("Produto criado com sucesso.");
     }
 
     @PutMapping("/products")
     public ResponseEntity<Object> updateProduct(@RequestBody @Valid ProductUpdateDTO reqProduct, HttpServletRequest request) throws InvalidDataException {
-        try {
-            String principalName = request.getUserPrincipal().getName();
-            User tokenUser = userService.findByUsername(principalName);
+        String principalName = request.getUserPrincipal().getName();
+        User tokenUser = userService.findByUsername(principalName);
 
-            productService.updateProduct(reqProduct, tokenUser);
+        productService.updateProduct(reqProduct, tokenUser);
 
-            return restResponse.ok("Produto atualizado com sucesso.");
+        return restResponse.ok("Produto atualizado com sucesso.");
 
-        } catch (InvalidDataException ex) {
-            throw new InvalidDataException(ex.getMessage());
-        }
     }
 
     @DeleteMapping("/products/{productId}")
     public ResponseEntity<Object> deleteProduct(HttpServletRequest request, @PathVariable Integer productId) throws InvalidDataException {
-        try {
-            String principalName = request.getUserPrincipal().getName();
-            User tokenUser = userService.findByUsername(principalName);
+        String principalName = request.getUserPrincipal().getName();
+        User tokenUser = userService.findByUsername(principalName);
 
-            productService.deleteProduct(productId, tokenUser);
+        productService.deleteProduct(productId, tokenUser);
 
-            return restResponse.ok("Produto removido com sucesso.");
-        } catch (InvalidDataException ex) {
-            throw new InvalidDataException(ex.getMessage());
-        }
+        return restResponse.ok("Produto removido com sucesso.");
     }
 }

@@ -22,27 +22,24 @@ public class AuthorizationServiceImpl implements UserDetailsService {
         this.repository = repository;
     }
 
-    public List<String> validateRegex(UserRegisterDTO user) {
-        List<String> messages = new ArrayList<>();
-
+    public String validateRegex(UserRegisterDTO user) {
         Pattern emailRegex = Pattern.compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
         Pattern usernameRegex = Pattern.compile("(?=[a-zA-Z0-9._]{6,20}$)(?!.*[_.]{2})[^_.].*[^_.]");
         Pattern passwordRegex = Pattern.compile("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,29}");
 
         if (!emailRegex.matcher(user.getEmail().trim()).matches()) {
-            messages.add("Insira um endereço de email valido.");
-            return messages;
-        }
-        if (!usernameRegex.matcher(user.getUsername().trim()).matches()) {
-            messages.add("Seu usuário deve conter de 6 a 30 caracteres e apenas os símbolos(._).");
-            return messages;
-        }
-        if (!passwordRegex.matcher(user.getPassword().trim()).matches()) {
-            messages.add("Sua senha deve conter pelo menos um número, uma letra maiúscula, um simbolo e ter de 6 a 30 caracteres");
-            return messages;
+            return "Insira um endereço de email valido.";
         }
 
-        return messages;
+        if (!usernameRegex.matcher(user.getUsername().trim()).matches()) {
+            return "Seu usuário deve conter de 6 a 30 caracteres e apenas os símbolos(._).";
+        }
+
+        if (!passwordRegex.matcher(user.getPassword().trim()).matches()) {
+            return "Sua senha deve conter pelo menos um número, uma letra maiúscula, um simbolo e ter de 6 a 30 caracteres";
+        }
+
+        return "";
     }
 
     @Override
