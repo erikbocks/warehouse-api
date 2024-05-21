@@ -3,7 +3,7 @@ package com.bock.warehouseapi.infra;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.bock.warehouseapi.entities.dtos.ErrorMessageDTO;
 import com.bock.warehouseapi.exceptions.InvalidDataException;
-import com.bock.warehouseapi.utils.RestResponse;
+import com.bock.warehouseapi.utils.RestErrorResponse;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
@@ -25,9 +25,9 @@ import java.util.Objects;
 @RestControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private final RestResponse restResponse;
+    private final RestErrorResponse restResponse;
 
-    public RestExceptionHandler(RestResponse restResponse) {
+    public RestExceptionHandler(RestErrorResponse restResponse) {
         this.restResponse = restResponse;
     }
 

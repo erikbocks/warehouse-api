@@ -18,10 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
-@RequestMapping(value = "/api/auth")
+@RequestMapping(value = "/api/auth", produces = "application/json")
 public class AuthRestController {
     private final RestResponse restResponse;
     private final AuthorizationServiceImpl authService;
