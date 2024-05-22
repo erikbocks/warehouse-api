@@ -82,7 +82,7 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("Talvez nao precise desse")
+    @DisplayName("Should save product successfully")
     void saveProduct_CaseSuccess() {
         service.saveProduct(toSaveProduct, mockUser);
         verify(repository, times(1)).saveAndFlush(any(Product.class));

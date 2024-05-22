@@ -14,9 +14,9 @@ public class Product {
     private Integer id;
     @Column(name = "product_name")
     private String productName;
-    @Column(name = "amount")
+    @Column(name = "product_amount")
     private Integer amount;
-    @Column(name = "value")
+    @Column(name = "product_value")
     private String value;
     @Column(name = "created_on")
     private Date createdOn;

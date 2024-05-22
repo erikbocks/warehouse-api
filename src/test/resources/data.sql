@@ -1,0 +1,2 @@
+INSERT INTO users (username, email, password, role) VALUES ('robertinho', 'robertinho@gmail.com', '$2a$10$Huo3ZsgXGhQIVmUf3mvTBeJaHx6h5iufKsmDskOAKSgq7I7dVYVQq', 'ADMIN');
+INSERT INTO products (product_name, product_amount, product_value, created_on, owner) VALUES ('Coca-Cola', 10, '9,90','2024-05-16 18:16:14.909', 1)
